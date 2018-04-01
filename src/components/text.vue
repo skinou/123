@@ -3,7 +3,7 @@
         <!-- <ele :data="obj"></ele>   -->
       <div v-if="data.type==='string'">
           <div class="item">
-            <label :for="data.name">{{data.name}} </label> 
+            <label :for="data.name">{{data.name}} </label>
             <input type="text" autofocus :name="data.name" v-model="data.value" @blur="data.check(data)">
              <span v-show="data.message!==''" class="error">{{data.message}}</span>
             <!-- <span v-show="data.message!==''" class="error">{{data.message}}</span> -->
@@ -11,16 +11,16 @@
       </div>
 
        <div v-else-if="data.type==='integer'">
-          <div class="item">
-            <label :for="data.name">{{data.name}}：</label> 
-            <input type="number" autofocus :name="data.name" v-model="data.value" @blur="data.check(data)">
-            <span v-show="data.message!==''" class="error">{{data.message}}</span>
-        </div>
+         <div class="item">
+           <label :for="data.name">{{data.name}}：</label>
+           <input type="number" autofocus :name="data.name" v-model="data.value" @blur="data.check(data)">
+           <span v-show="data.message!==''" class="error">{{data.message}}</span>
+         </div>
       </div>
 
        <div v-else-if="data.type==='drop'">
           <div class="item">
-               <label :for="data.name">{{data.name}}：</label> 
+               <label :for="data.name">{{data.name}}：</label>
               <select v-model="data.value" @blur="data.check(data)">
                 <option disabled value="">请选择</option>
                 <option v-for="item in data.enum" :key="item">{{item}}</option>
@@ -32,11 +32,11 @@
 
        <div v-else-if="data.type==='boolean'">
           <div class="item">
-               <label :for="data.name">{{data.name}}：</label> 
+               <label :for="data.name">{{data.name}}：</label>
 
                 <input type="radio"  value="true" v-model="data.value" @blur="data.check(data)">
                 <label for="true">true</label>
-    
+
                 <input type="radio"  value="false" v-model="data.value" @blur="data.check(data)">
                 <label for="false">false</label>
 

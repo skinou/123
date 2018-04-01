@@ -341,7 +341,7 @@ const schema = {
         }
       },
       doorInfo: {
-        title: "",
+        title: "doorInfo",
         type: "array",
         description: "",
         items: {
@@ -357,9 +357,8 @@ const schema = {
       }
     }
   };
-  
+
 
   export default {
     schema
 }
-    

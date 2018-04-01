@@ -2,9 +2,9 @@
    <div>
 
        <div v-for="(item,index) in element2" :key="index">
-            <ele :data="item"></ele> 
+            <!--<ele :data="data.properties"></ele> -->
        </div>
-       
+
    </div>
 </template>
 
@@ -58,18 +58,18 @@ export default {
                     this.element2.push(obj2)
                 }
 
-               
+
                 if(schema.properties){
                     h+=1
                     for(let i in schema.properties){
                         // this.generate(schema.properties[i],obj.item,i)
-                        
+
                         this.generate(schema.properties[i],i,h)
                     }
                 }
 
                 // element.push(obj)
-                
+
 
             }
             else if(type === "string"){
@@ -137,12 +137,12 @@ export default {
                         }
 
                     }
-        
+
 
                     // element.push(obj)
                     this.element2.push(obj)
                 }
-            
+
 
             }
             else if(type === "integer"||type === "number"){
@@ -157,7 +157,7 @@ export default {
                         check: (obj)=>{
                             if(obj.value === ''){
                                 obj.message = "不能为空"
-                            } 
+                            }
                              else if(minimum){
                                 if(obj.value < minimum ){
                                     obj.message = "最小值为"+minimum;
@@ -190,7 +190,7 @@ export default {
                         check: (obj)=>{
                             if(obj.value === ''){
                                 obj.message = "不能为空"
-                            } 
+                            }
                             else{
                                 obj.message = ""
                             }
@@ -207,14 +207,14 @@ export default {
                 //         title:schema.title,
                 //         type:"array",
                 //         item:[],
-                //         // message:''        
+                //         // message:''
                 //     }
 
                     let obj2 = {
                         name:name,
                         title:schema.title,
                         type:"array",
-                        h:h       
+                        h:h
                     }
 
                     console.log("121231123123123")
@@ -237,7 +237,7 @@ export default {
                         check: (obj3)=>{
                             if(obj3.value === ''){
                                 obj3.message = "不能为空"
-                            } 
+                            }
                             else{
                                 obj3.message = ""
                             }
@@ -246,7 +246,7 @@ export default {
                         }
                         this.element2.push(obj3)
                     }
-                    
+
                     // element.push(obj)
             }
         }
