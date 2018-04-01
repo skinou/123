@@ -1,40 +1,22 @@
 <template>
 
   <li>
-    <div class="item" v-if="model.type === 'array'">
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
-      <span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>
-      <ul v-show="open" v-if="isFolder">
-        <item
-          :model="model.items">
-        </item>
-        <!--v-for="(item, index) in model.items"-->
-        <!--:key="index"-->
-        <li><button type="button" @click="addChild" class="add">添加</button></li>
-      </ul>
-    </div>
+    <!--<div class="item" v-if="model instanceof Array">-->
+      <!--<input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">-->
+      <!--<span>{{model.type}})</span>-->
+      <!--<span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>-->
+      <!--<ul v-show="open" v-if="isFolder">-->
+        <!--<item-->
+          <!--:model="model.items">-->
+        <!--</item>-->
+        <!--<li><button type="button" @click="addChild" class="add">添加</button></li>-->
+      <!--</ul>-->
+    <!--</div>-->
 
-    <div class="item" v-else-if="model.type === 'object'">
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
-      <input type="text">
-      <span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>
-      <ul v-show="open" v-if="isFolder">
-        <item
-          v-for="(item, index) in model.properties"
-          :key="index"
-          :model="item">
-        </item>
-        <!--<li class="add" @click="addChild">+</li>-->
-        <li><button type="button" @click="addChild" class="add">添加</button></li>
-      </ul>
-    </div>
-
-    <div class="item" v-else>
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
-      <input type="text">
+    <div class="item" v-if="typeof model === 'object'">
+      <!--<input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">-->
+      <!--<span>{{model.type}})</span>-->
+      <!--<input type="text">-->
       <!--<span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>-->
       <!--<ul v-show="open" v-if="isFolder">-->
         <!--<item-->
@@ -42,9 +24,24 @@
           <!--:key="index"-->
           <!--:model="item">-->
         <!--</item>-->
-        <!--<li class="add" @click="addChild">+</li>-->
+        <!--<li><button type="button" @click="addChild" class="add">添加</button></li>-->
       <!--</ul>-->
+      <div  v-for="(item, index) in array" :key="index">
+        <span>{{item}}</span>
+        <!--<span>{{typeof item}}</span>-->
+        <!--<div v-if="typeof item==='string'">-->
+          <!--<input type="text" v-model="item"/>-->
+        <!--</div>-->
+      </div>
+
+
     </div>
+
+    <!--<div class="item" v-else>-->
+      <!--<input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">-->
+      <!--<span>{{model.type}})</span>-->
+      <!--<input type="text">-->
+    <!--</div>-->
 
 
   </li>
@@ -53,13 +50,23 @@
 
 <script>
     export default {
-      name: "item",
+      name: "text3",
       props: {
         model: Object
       },
+      created(){
+        for(let item in this.model){
+          // console.log(item+':'+this.model[item]);
+          let obj = {};
+          obj[item]=this.model[item];
+          this.array.push(obj)
+        }
+        console.log(this.array)
+      },
       data: function () {
         return {
-          open: false
+          open: false,
+          array:[]
         }
       },
       computed: {
@@ -71,8 +78,6 @@
           else{
             return this.model.properties
           }
-          // return this.model.children &&
-          //   this.model.children.length
         }
       },
       methods: {
@@ -139,5 +144,9 @@
     padding-left: 20px;
     font-weight: bold;
     color: whitesmoke;
+  }
+
+  span{
+    display: block;
   }
 </style>
