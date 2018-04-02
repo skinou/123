@@ -3,11 +3,13 @@
   <li>
     <div class="item" v-if="model.type === 'array'">
       <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
+      <!-- <span>({{model.type}})</span> -->
       <span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>
       <ul v-show="open" v-if="isFolder">
         <item
-          :model="model.items">
+         v-for="(item, index) in model.items"
+          :key="index"
+          :model="item">
         </item>
         <!--v-for="(item, index) in model.items"-->
         <!--:key="index"-->
@@ -17,8 +19,8 @@
 
     <div class="item" v-else-if="model.type === 'object'">
       <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
-      <input type="text">
+      <!-- <span>({{model.type}})</span> -->
+      <!-- <input type="text"> -->
       <span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>
       <ul v-show="open" v-if="isFolder">
         <item
@@ -27,14 +29,26 @@
           :model="item">
         </item>
         <!--<li class="add" @click="addChild">+</li>-->
-        <li><button type="button" @click="addChild" class="add">添加</button></li>
+        <!-- <li><button type="button" @click="addChild" class="add">添加</button></li> -->
       </ul>
     </div>
 
     <div class="item" v-else>
+
       <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <span>{{model.type}})</span>
-      <input type="text">
+      <!-- <span>{{model.type}})</span> -->
+      <input type="text"  v-model=" model.val" class="value">
+
+      <!-- <ul v-if="model.val instanceof Array">
+        <li v-for="(item,index) in model.val" :key="index">
+          <input type="text" :name=" model.title" :value="index" disabled class="disabled">
+          <span>{{model.type}})</span>
+          <input type="text"  v-model="model.val[index]" class="value">
+        </li>
+      </ul> -->
+
+      <!-- <div v-else>
+      </div> -->
       <!--<span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>-->
       <!--<ul v-show="open" v-if="isFolder">-->
         <!--<item-->
@@ -57,9 +71,15 @@
       props: {
         model: Object
       },
+      created(){
+        // this.model = this.schema
+        // console.log(this.model)
+
+      },
       data: function () {
         return {
-          open: false
+          open: false,
+          // model:Object
         }
       },
       computed: {
@@ -76,12 +96,29 @@
         }
       },
       methods: {
+         deepCopy(p, c) {
+    　　　　var c = c || {};
+    　　　　for (var i in p) {
+    　　　　　　if (typeof p[i] === 'object') {
+    　　　　　　　　c[i] = (p[i].constructor === Array) ? [] : {};
+    　　　　　　　　this.deepCopy(p[i], c[i]);
+    　　　　　　} else {
+    　　　　　　　　　c[i] = p[i];
+    　　　　　　}
+    　　　　}
+    　　　　return c;
+    　　},
         toggle: function () {
           if (this.isFolder) {
             this.open = !this.open
           }
         },
         addChild: function () {
+          console.log(this.model.items[0])
+          let newObj = this.deepCopy(this.model.items[0])
+          let index = this.model.items.length
+          newObj.title = index
+          this.model.items.push(newObj)
           // if(this.model.type==='array'){
           //   // this.model.items.push(this.model.items[0])
           //   this.model.items = Object.assign(this.model.items,)
@@ -101,13 +138,10 @@
   .item {
     display: inline-block;
   }
-  .bold {
-    font-weight: bold;
-  }
   ul {
     padding-left: 2em;
     line-height: 1.5em;
-    list-style-type: dot;
+    list-style-type: none;
     margin: 10px;
   }
   li{
@@ -128,8 +162,8 @@
     background-color: dodgerblue;
     text-align: center;
     color: white;
-    width: 80px;
-    height: 50px;
+    width: 60px;
+    height: 40px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -139,5 +173,11 @@
     padding-left: 20px;
     font-weight: bold;
     color: whitesmoke;
+  }
+  .value{
+    width: 500px;
+    padding-left:20px;
+    color: dodgerblue;
+    font-weight: bold    
   }
 </style>

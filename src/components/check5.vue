@@ -1,38 +1,234 @@
 <template>
 <div>
-  <p>(You can double click on an item to turn it into a folder.)</p>
-
-  <!-- the demo root element -->
-  <!--<ul id="demo">-->
-    <!--<item-->
-      <!--class="item"-->
-      <!--:model="schema">-->
-    <!--</item>-->
-  <!--</ul>-->
 
   <ul id="demo">
+    <item
+      class="item"
+      :model="newData"
+      >
+    </item>
+  </ul>
+
+  <button type="button" @click="save" class="save">保存</button>
+
+  <h6 v-for="(item, index) in obj.schema" :key="index">{{item}}</h6>
+
+
+  <!-- <ul id="demo">
     <item2
       class="item"
       :model="schemaData">
     </item2>
-  </ul>
+  </ul> -->
+
+
 </div>
 </template>
 
 <script>
   import text2 from "./text2"
   import text3 from "./text3"
+  import data from "../data2"
     export default {
       name: "check5",
       created(){
-        console.log(typeof this.schemaData)
+        // console.log(typeof this.schemaData)
+        let title = "schema"
+        let obj = this.createObj(this.schemaData,title)
+        this.newData=Object.assign(this.newData,obj)
+        console.log(this.newData)
+
+        // console.log(Number("sfds"))
+        // console.log( JSON.stringify(this.schemaData))
       },
       components:{
         'item':text2,
         'item2':text3
       },
+      methods:{
+        save(){
+          console.log(this.newData)
+          this.obj = this.getObj(this.newData)
+         
+          for(let index in this.obj.schema){
+             console.log(index+':'+this.obj.schema[index])
+          }
+
+        },
+        getObj(schema){
+          let type = schema.type
+          let obj = {}
+          if ( type === "string"||type === "integer"||type === "boolean") {
+            if( schema.title!==""){
+              obj[schema.title] = schema.val
+              return obj
+            }
+            else{
+              return schema.val
+            }
+      
+          }
+          else if(type === "object"){
+             let obj1 = {}
+            for(let item in schema.properties){
+              obj1 = Object.assign(obj1, this.getObj(schema.properties[item]))
+            }
+            obj[schema.title] = obj1
+             return obj
+        
+          }
+          else if(type === "array"){
+            let arr = []
+            for(let item in schema.items){
+              console.log(schema.items[item])
+              arr.push(this.getObj(schema.items[item]))
+            }
+             if(schema.title!==""){
+              obj[schema.title] = arr
+              return obj
+            }
+            else{
+              return arr
+            }
+            
+          }
+          
+
+        },
+        // getArray(arr){
+
+        // },
+        createObj(obj,title) {
+          let scheme = {
+            title: title,
+            type: "object",
+            description: "",
+            properties: {},
+            val:obj
+          };
+          for (let key in obj) {
+            let val = obj[key];
+            scheme.properties[key] = {
+              title: key,
+              description: "",
+              val:val
+            };
+            if (typeof val === "string") {
+              scheme.properties[key].type = "string";
+            }
+            if (typeof val === "number") {
+              scheme.properties[key].type = "integer";
+            }
+            if (typeof val === "boolean") {
+              scheme.properties[key].type = "boolean";
+            }
+            if (typeof val === "object" && Array.isArray(val)) {
+              scheme.properties[key] = this.createArray(val,key);
+            }
+            if (typeof val === "object" && !Array.isArray(val)) {
+              scheme.properties[key] = this.createObj(val,key);
+            }
+          }
+          return scheme;
+        },
+
+        createArray(arr,title) {
+          let scheme = {
+            title: title,
+            type: "array",
+            description: "",
+            val:arr,
+            // items: {}
+            items: []
+          };
+          for (let index in arr) {
+            if (typeof arr[index] === "string") {
+              // scheme.items = {
+              //   type: "string",
+              //   title: "",
+              //   description: "",
+              //   val:arr,
+              // };
+              //  scheme.items =Object.assign(scheme.items, {
+              //     type: "string",
+              //     title: "",
+              //     description: "",
+              //     val:val,
+              //   }) 
+               scheme.items.push({
+                type: "string",
+                title: index,
+                description: "",
+                val:arr[index],
+              }) 
+            }
+            if (typeof arr[index] === "number") {
+              // scheme.items = {
+              //   type: "integer",
+              //   title: "",
+              //   description: "",
+              //   val:arr,
+              // };
+              //  scheme.items =Object.assign(scheme.items, {
+              //   type: "string",
+              //   title: "",
+              //   description: "",
+              //   val:val,
+              // }) 
+               scheme.items.push({
+                type: "integer",
+                title: index,
+                description: "",
+                val:arr[index],
+              }) 
+            }
+            if (typeof arr[index] === "boolean") {
+              // scheme.items = {
+              //   type: "boolean",
+              //   title: "",
+              //   description: "",
+              //   val:arr,
+              // };
+              // scheme.items =Object.assign(scheme.items, {
+              //   type: "string",
+              //   title: "",
+              //   description: "",
+              //   val:val,
+              // }) 
+              scheme.items.push({
+                type: "boolean",
+                title: index,
+                description: "",
+                val:arr[index],
+              }) 
+            }
+            if (typeof arr[index] === "object" && Array.isArray(arr[index])) {
+              let title = ''
+              // scheme.items = this.createArray(val,title);
+              // scheme.items =Object.assign(scheme.items, this.createArray(val,title)) 
+               let obj = this.createArray(arr[index],title)
+              obj.title = index
+              scheme.items.push(obj) 
+            }
+            if (typeof arr[index] === "object" && !Array.isArray(arr[index])) {
+              let title = ''
+              // scheme.items = this.createObj(val,title);
+              //  scheme.items =Object.assign(scheme.items,this.createObj(val,title))
+              let obj = this.createObj(arr[index],title)
+              obj.title = index
+               scheme.items.push(obj)  
+            }
+          }
+          return scheme;
+        }
+
+      },
       data(){
         return{
+          obj:'',
+          transferData:{},
+          newData:{},
+          datas:data.schema,
           schemaData:{
             name: "模板",
             title: "萌动全城，寻找最萌宝宝！",
@@ -150,211 +346,206 @@
                 "供销昌安店",
                 "中心北路398号"
               ],
-              ["供销柯桥店", "笛扬路农贸市场二楼"]
+              ["供销柯桥店", "笛扬路农贸市场二楼"],
             ]
           },
 
 
 
-
-
-
-
-
-          // schema:{
-          //   name:'schema',
-          //   title: "schema",
-          //   type: "object",
-          //   description: "123456465",
-          //   properties: {
-          //     name: {
-          //       name:'name',
-          //       title: "name",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     title: {
-          //       title: "title",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     fappid: {
-          //       title: "fappid",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     storageName: {
-          //       title: "storageName",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     ercode: {
-          //       title: "ercode",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     server: {
-          //       title: "server",
-          //       description: "",
-          //       type: "string"
-          //     },
-          //     debug: {
-          //       title: "debug",
-          //       description: "",
-          //       type: "boolean"
-          //     },
-          //     isCover: {
-          //       title: "isCover",
-          //       description: "",
-          //       type: "boolean"
-          //     },
-          //     isSubscribe: {
-          //       title: "isSubscribe",
-          //       description: "",
-          //       type: "boolean"
-          //     },
-          //     totalCount: {
-          //       title: "totalCount",
-          //       description: "",
-          //       type: "number"
-          //     },
-          //     shareConfig: {
-          //       name:'shareConfig',
-          //       title: "shareConfig",
-          //       type: "object",
-          //       description: "",
-          //       properties: {
-          //         base: {
-          //           name:'base',
-          //           title: "base",
-          //           type: "object",
-          //           description: "",
-          //           properties: {
-          //             title: {
-          //               title: "title",
-          //               description: "",
-          //               type: "string"
-          //             },
-          //             desc: {
-          //               title: "desc",
-          //               description: "",
-          //               type: "string"
-          //             },
-          //             imgUrl: {
-          //               title: "imgUrl",
-          //               description: "",
-          //               type: "string"
-          //             }
-          //           }
-          //         },
-          //         forward: {
-          //           name:"forward",
-          //           title: "forward",
-          //           type: "object",
-          //           description: "",
-          //           properties: {
-          //             title: {
-          //               title: "title",
-          //               description: "",
-          //               type: "string"
-          //             },
-          //             desc: {
-          //               title: "desc",
-          //               description: "",
-          //               type: "string"
-          //             },
-          //             imgUrl: {
-          //               title: "imgUrl",
-          //               description: "",
-          //               type: "string"
-          //             }
-          //           }
-          //         }
-          //       }
-          //
-          //     },
-          //
-          //     banner: {
-          //       title: "banner",
-          //       type: "array",
-          //       description: "",
-          //       items: {
-          //         type: "string",
-          //         title: "",
-          //         description: ""
-          //       }
-          //     },
-          //     other_banner: {
-          //       title: "other_banner",
-          //       type: "array",
-          //       description: "",
-          //       items: {
-          //         type: "string",
-          //         title: "",
-          //         description: ""
-          //       }
-          //     },
-          //
-          //     poster: {
-          //       title: "poster",
-          //       type: "object",
-          //       description: "",
-          //       properties: {
-          //         desc: {
-          //           title: "desc",
-          //           type: "array",
-          //           description: "",
-          //           items: {
-          //             type: "string",
-          //             title: "",
-          //             description: ""
-          //           }
-          //         }
-          //       }
-          //     },
-          //
-          //     prize_item: {
-          //       title: "prize_item",
-          //       type: "array",
-          //       description: "",
-          //       items: {
-          //         title: "",
-          //         type: "object",
-          //         description: "",
-          //         properties: {
-          //           prize_no: {
-          //             title: "prize_no",
-          //             description: "",
-          //             type: "string"
-          //           },
-          //           prize_content: {
-          //             title: "prize_content",
-          //             description: "",
-          //             type: "string"
-          //           }
-          //         }
-          //       }
-          //     },
-          //
-          //     doorInfo: {
-          //       title: "doorInfo",
-          //       type: "array",
-          //       description: "",
-          //       items: {
-          //         title: "1",
-          //         type: "array",
-          //         description: "",
-          //         items: {
-          //           type: "string",
-          //           title: "2",
-          //           description: ""
-          //         }
-          //       }
-          //     }
-          //
-          //
-          //   }
-          // }
+          schema:{
+            name:'schema',
+            title: "schema",
+            type: "object",
+            description: "123456465",
+            properties: {
+              name: {
+                name:'name',
+                title: "name",
+                description: "",
+                type: "string"
+              },
+              title: {
+                title: "title",
+                description: "",
+                type: "string"
+              },
+              fappid: {
+                title: "fappid",
+                description: "",
+                type: "string"
+              },
+              storageName: {
+                title: "storageName",
+                description: "",
+                type: "string"
+              },
+              ercode: {
+                title: "ercode",
+                description: "",
+                type: "string"
+              },
+              server: {
+                title: "server",
+                description: "",
+                type: "string"
+              },
+              debug: {
+                title: "debug",
+                description: "",
+                type: "boolean"
+              },
+              isCover: {
+                title: "isCover",
+                description: "",
+                type: "boolean"
+              },
+              isSubscribe: {
+                title: "isSubscribe",
+                description: "",
+                type: "boolean"
+              },
+              totalCount: {
+                title: "totalCount",
+                description: "",
+                type: "number"
+              },
+              shareConfig: {
+                name:'shareConfig',
+                title: "shareConfig",
+                type: "object",
+                description: "",
+                properties: {
+                  base: {
+                    name:'base',
+                    title: "base",
+                    type: "object",
+                    description: "",
+                    properties: {
+                      title: {
+                        title: "title",
+                        description: "",
+                        type: "string"
+                      },
+                      desc: {
+                        title: "desc",
+                        description: "",
+                        type: "string"
+                      },
+                      imgUrl: {
+                        title: "imgUrl",
+                        description: "",
+                        type: "string"
+                      }
+                    }
+                  },
+                  forward: {
+                    name:"forward",
+                    title: "forward",
+                    type: "object",
+                    description: "",
+                    properties: {
+                      title: {
+                        title: "title",
+                        description: "",
+                        type: "string"
+                      },
+                      desc: {
+                        title: "desc",
+                        description: "",
+                        type: "string"
+                      },
+                      imgUrl: {
+                        title: "imgUrl",
+                        description: "",
+                        type: "string"
+                      }
+                    }
+                  }
+                }
+          
+              },
+          
+              banner: {
+                title: "banner",
+                type: "array",
+                description: "",
+                items: {
+                  type: "string",
+                  title: "",
+                  description: ""
+                }
+              },
+              other_banner: {
+                title: "other_banner",
+                type: "array",
+                description: "",
+                items: {
+                  type: "string",
+                  title: "",
+                  description: ""
+                }
+              },
+          
+              poster: {
+                title: "poster",
+                type: "object",
+                description: "",
+                properties: {
+                  desc: {
+                    title: "desc",
+                    type: "array",
+                    description: "",
+                    items: {
+                      type: "string",
+                      title: "",
+                      description: ""
+                    }
+                  }
+                }
+              },
+          
+              prize_item: {
+                title: "prize_item",
+                type: "array",
+                description: "",
+                items: {
+                  title: "",
+                  type: "object",
+                  description: "",
+                  properties: {
+                    prize_no: {
+                      title: "prize_no",
+                      description: "",
+                      type: "string"
+                    },
+                    prize_content: {
+                      title: "prize_content",
+                      description: "",
+                      type: "string"
+                    }
+                  }
+                }
+              },
+          
+              doorInfo: {
+                title: "doorInfo",
+                type: "array",
+                description: "",
+                items: {
+                  title: "",
+                  type: "array",
+                  description: "",
+                  items: {
+                    type: "string",
+                    title: "",
+                    description: ""
+                  }
+                }
+              }
+          
+          
+            }
+          }
 
 
 
@@ -488,5 +679,16 @@
     padding-left: 1em;
     line-height: 1.5em;
     list-style-type: dot;
+  }
+  .save{
+     background-color: dodgerblue;
+    text-align: center;
+    color: white;
+    width: 60px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 100px;
   }
 </style>
