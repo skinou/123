@@ -18,6 +18,9 @@
       components:{
         'item':text3
       },
+      created(){
+
+      },
       data(){
         return {
           treeData: {
@@ -47,7 +50,8 @@
                 ]
               }
             ]
-          }
+          },
+          newData:{}
         }
       }
     }

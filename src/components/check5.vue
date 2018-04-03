@@ -35,9 +35,9 @@
       name: "check5",
       created(){
         // console.log(typeof this.schemaData)
-        let title = "schema"
-        let obj = this.createObj(this.schemaData,title)
-        this.newData=Object.assign(this.newData,obj)
+        let title = "schema";
+        let obj = this.createObj(this.schemaData,title);
+        this.newData=Object.assign({},this.newData,obj);
         console.log(this.newData)
 
         // console.log(Number("sfds"))
@@ -51,51 +51,51 @@
       methods:{
         save(){
           // console.log(this.newData)
-          this.obj = this.getObj(this.newData)
-         
+          this.obj = this.getObj(this.newData);
+
           for(let index in this.obj.schema){
              console.log(index+':'+this.obj.schema[index])
           }
 
         },
         getObj(schema){
-          let type = schema.type
-          let obj = {}
+          let type = schema.type;
+          let obj = {};
           if ( type === "string"||type === "integer"||type === "boolean") {
             if( schema.title!==""){
-              obj[schema.title] = schema.val
+              obj[schema.title] = schema.val;
               return obj
             }
             else{
               return schema.val
             }
-      
+
           }
           else if(type === "object"){
-             let obj1 = {}
+             let obj1 = {};
             for(let item in schema.properties){
               obj1 = Object.assign(obj1, this.getObj(schema.properties[item]))
             }
-            obj[schema.title] = obj1
+            obj[schema.title] = obj1;
              return obj
-        
+
           }
           else if(type === "array"){
-            let arr = []
+            let arr = [];
             for(let item in schema.items){
-              console.log(schema.items[item])
+              console.log(schema.items[item]);
               arr.push(this.getObj(schema.items[item]))
             }
              if(schema.title!==""){
-              obj[schema.title] = arr
+              obj[schema.title] = arr;
               return obj
             }
             else{
               return arr
             }
-            
+
           }
-          
+
 
         },
         // getArray(arr){
@@ -157,13 +157,13 @@
               //     title: "",
               //     description: "",
               //     val:val,
-              //   }) 
+              //   })
                scheme.items.push({
                 type: "string",
-                title:  Number(index),
+                title: '',
                 description: "",
                 val:arr[index],
-              }) 
+              })
             }
             if (typeof arr[index] === "number") {
               // scheme.items = {
@@ -177,13 +177,13 @@
               //   title: "",
               //   description: "",
               //   val:val,
-              // }) 
+              // })
                scheme.items.push({
                 type: "integer",
-                title: Number(index),
+                title: '',
                 description: "",
                 val:arr[index],
-              }) 
+              })
             }
             if (typeof arr[index] === "boolean") {
               // scheme.items = {
@@ -197,29 +197,27 @@
               //   title: "",
               //   description: "",
               //   val:val,
-              // }) 
+              // })
               scheme.items.push({
                 type: "boolean",
-                title:  Number(index),
+                title:  '',
                 description: "",
                 val:arr[index],
-              }) 
+              })
             }
             if (typeof arr[index] === "object" && Array.isArray(arr[index])) {
-              let title = ''
+              let title = '';
               // scheme.items = this.createArray(val,title);
-              // scheme.items =Object.assign(scheme.items, this.createArray(val,title)) 
-               let obj = this.createArray(arr[index],title)
-              obj.title =  Number(index)
-              scheme.items.push(obj) 
+              // scheme.items =Object.assign(scheme.items, this.createArray(val,title))
+               let obj = this.createArray(arr[index],title);
+              scheme.items.push(obj)
             }
             if (typeof arr[index] === "object" && !Array.isArray(arr[index])) {
-              let title = ''
+              let title = '';
               // scheme.items = this.createObj(val,title);
               //  scheme.items =Object.assign(scheme.items,this.createObj(val,title))
-              let obj = this.createObj(arr[index],title)
-              obj.title =  Number(index)
-               scheme.items.push(obj)  
+              let obj = this.createObj(arr[index],title);
+               scheme.items.push(obj)
             }
           }
           return scheme;
@@ -465,9 +463,9 @@
                     }
                   }
                 }
-          
+
               },
-          
+
               banner: {
                 title: "banner",
                 type: "array",
@@ -488,7 +486,7 @@
                   description: ""
                 }
               },
-          
+
               poster: {
                 title: "poster",
                 type: "object",
@@ -506,7 +504,7 @@
                   }
                 }
               },
-          
+
               prize_item: {
                 title: "prize_item",
                 type: "array",
@@ -529,7 +527,7 @@
                   }
                 }
               },
-          
+
               doorInfo: {
                 title: "doorInfo",
                 type: "array",
@@ -545,8 +543,8 @@
                   }
                 }
               }
-          
-          
+
+
             }
           }
 
