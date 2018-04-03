@@ -34,8 +34,8 @@
       },
       computed: {
         isFolder: function () {
-          return this.model.children &&
-            this.model.children.length
+          // return this.model.children &&
+          //   this.model.children.length
         }
       },
       methods: {

@@ -1,65 +1,36 @@
 <template>
 
   <li>
-    <div class="item" v-if="model.type === 'array'">
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
+    <div class="item" v-if="getModel.type === 'array'">
+      <input type="text" :name=" getModel.title" :value=" getModel.title" disabled class="disabled">
       <!-- <span>({{model.type}})</span> -->
-      <span v-if="isFolder" @click="toggle"> {{ open ? '-' : '+' }} </span>
-      <ul v-show="open" v-if="isFolder">
+      <span @click="toggle"> {{ open ? '-' : '+' }} </span>
+      <ul >
         <item
-         v-for="(item, index) in model.items"
+         v-for="(item, index) in getModel.items"
           :key="index"
           :model="item">
         </item>
-        <!--<button type="button" @click="addChild" class="add">删除</button>-->
-        <!--v-for="(item, index) in model.items"-->
-        <!--:key="index"-->
-        <li><button type="button" @click="addChild" class="add">添加</button></li>
+       <li><button type="button" @click="addChild(getModel.items)" class="add">添加({{isFolder1.length}})</button></li>
       </ul>
+      
     </div>
 
-    <div class="item" v-else-if="model.type === 'object'">
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <!-- <span>({{model.type}})</span> -->
-      <!-- <input type="text"> -->
-      <span v-if="isFolder" @click="toggle"> {{ open ? '-' : '+' }} </span>
-      <ul v-show="open" v-if="isFolder">
+    <div class="item" v-else-if="getModel.type === 'object'">
+      <input type="text" :name=" getModel.title" :value="getModel.title" disabled class="disabled">
+      <span @click="toggle"> {{ open ? '-' : '+' }} </span>
+      <ul>
         <item
-          v-for="(item, index) in model.properties"
+          v-for="(item, index) in getModel.properties"
           :key="index"
           :model="item">
         </item>
-
-        <!--<li class="add" @click="addChild">+</li>-->
-         <!--<li><button type="button" @click="addChild" class="add">添加</button></li>-->
-        <!--<li @click="addChild">添加</li>-->
       </ul>
     </div>
 
     <div class="item" v-else>
-      <input type="text" :name=" model.title" v-model=" model.title" disabled class="disabled">
-      <!-- <span>{{model.type}})</span> -->
+      <input type="text" :name=" model.title" :value=" model.title" disabled class="disabled">
       <input type="text"  v-model=" model.val" class="value">
-
-      <!-- <ul v-if="model.val instanceof Array">
-        <li v-for="(item,index) in model.val" :key="index">
-          <input type="text" :name=" model.title" :value="index" disabled class="disabled">
-          <span>{{model.type}})</span>
-          <input type="text"  v-model="model.val[index]" class="value">
-        </li>
-      </ul> -->
-
-      <!-- <div v-else>
-      </div> -->
-      <!--<span v-if="isFolder" @click="toggle">[ {{ open ? '-' : '+' }} ]</span>-->
-      <!--<ul v-show="open" v-if="isFolder">-->
-        <!--<item-->
-          <!--v-for="(item, index) in model.properties"-->
-          <!--:key="index"-->
-          <!--:model="item">-->
-        <!--</item>-->
-        <!--<li class="add" @click="addChild">+</li>-->
-      <!--</ul>-->
     </div>
 
 
@@ -87,60 +58,53 @@
       computed: {
         isFolder: function () {
           if(this.model.type==='array'){
-            // this.model.items.push(this.model.items[0])
             return this.model.items
           }
           else{
             return this.model.properties
           }
-          // return this.model.children &&
-          //   this.model.children.length
+        },
+        isFolder1() {
+          return this.model.items
+        },
+         isFolder2() {
+           return this.model.properties
+        },
+        getModel(){
+          return this.model
         }
+
       },
       methods: {
-    //      deepCopy(p, c) {
-    // 　　　　var c = c || {};
-    // 　　　　for (var i in p) {
-    // 　　　　　　if (typeof p[i] === 'object') {
-    // 　　　　　　　　c[i] = (p[i].constructor === Array) ? [] : {};
-    // 　　　　　　　　this.deepCopy(p[i], c[i]);
-    // 　　　　　　} else {
-    // 　　　　　　　　　c[i] = p[i];
-    // 　　　　　　}
-    // 　　　　}
-    // 　　　　return c;
-    // 　　},
-        toggle: function () {
-          if (this.isFolder) {
-            this.open = !this.open
-          }
+        deepCopy(p, c) {
+    　　  var c = c || {};
+    　　    for (var i in p) {
+    　　      if (typeof p[i] === 'object') {
+    　　　　　   c[i] = (p[i].constructor === Array) ? [] : {};
+    　　　　　　 this.deepCopy(p[i], c[i]);
+    　　　　　}
+
+              else {
+                c[i] = p[i];
+    　　　　　}
+    　　　　}
+    　　　　return c;
+    　　},
+        toggle() {
+           this.open = !this.open
+          // if (this.isFolder) {
+          //   console.log(this.isFolder)
+           
+          // }
         },
-        addChild: function () {
-          // console.log(this.model.items[0]);
-          // let newObj = this.deepCopy(items[0]);
-          // let index = items.length;
-          // newObj.title = index
-          // items.push(newObj)
-          // if(this.model.properties) {
-          //   this.model.properties = Object.assign(this.model.properties, {
-          //     title: '12132132123',
-          //     type:"string"
-          //
-          //   })
-          // }
-
-          if(this.model.type==='array'){
-            this.model.items.push(this.model.items[0])
-            // this.model.items = Object.assign(this.model.items,)
-          }
-          // else{
-          //   this.model.properties.push({
-          //     title: 'new',
-          //     type:'string',
-          //     val:"12312313"
-          //   })
-          // }
-
+        addChild(items) {
+          let newObj = this.deepCopy(items[0]);
+          // let index = this.model.items.length;
+          // newObj.title = index;
+          items.push(newObj)
+          console.log(this.isFolder1.length)
+          console.log(this.isFolder1)
+          console.log(this.getModel)
         }
       }
     }

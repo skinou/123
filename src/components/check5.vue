@@ -28,6 +28,8 @@
 <script>
   import text2 from "./text2"
   import text3 from "./text3"
+  import item from "./item"
+
   import data from "../data2"
     export default {
       name: "check5",
@@ -42,12 +44,13 @@
         // console.log( JSON.stringify(this.schemaData))
       },
       components:{
-        'item':text2,
-        'item2':text3
+        // 'item':text2,
+        // 'item2':text3,
+        'item':item,
       },
       methods:{
         save(){
-          console.log(this.newData)
+          // console.log(this.newData)
           this.obj = this.getObj(this.newData)
          
           for(let index in this.obj.schema){
@@ -157,7 +160,7 @@
               //   }) 
                scheme.items.push({
                 type: "string",
-                title: index,
+                title:  Number(index),
                 description: "",
                 val:arr[index],
               }) 
@@ -177,7 +180,7 @@
               // }) 
                scheme.items.push({
                 type: "integer",
-                title: index,
+                title: Number(index),
                 description: "",
                 val:arr[index],
               }) 
@@ -197,7 +200,7 @@
               // }) 
               scheme.items.push({
                 type: "boolean",
-                title: index,
+                title:  Number(index),
                 description: "",
                 val:arr[index],
               }) 
@@ -207,7 +210,7 @@
               // scheme.items = this.createArray(val,title);
               // scheme.items =Object.assign(scheme.items, this.createArray(val,title)) 
                let obj = this.createArray(arr[index],title)
-              obj.title = index
+              obj.title =  Number(index)
               scheme.items.push(obj) 
             }
             if (typeof arr[index] === "object" && !Array.isArray(arr[index])) {
@@ -215,7 +218,7 @@
               // scheme.items = this.createObj(val,title);
               //  scheme.items =Object.assign(scheme.items,this.createObj(val,title))
               let obj = this.createObj(arr[index],title)
-              obj.title = index
+              obj.title =  Number(index)
                scheme.items.push(obj)  
             }
           }
